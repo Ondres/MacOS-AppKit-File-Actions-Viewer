@@ -1,0 +1,633 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CE44E6CE2B31D0D100BA4867 /* FileActionsViewerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE44E6CD2B31D0D100BA4867 /* FileActionsViewerApp.swift */; };
+		CE44E6D02B31D0D100BA4867 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE44E6CF2B31D0D100BA4867 /* ContentView.swift */; };
+		CEBCC4A92B3C50570073F598 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4A82B3C50570073F598 /* main.swift */; };
+		CEBCC4AF2B3C50BC0073F598 /* IPCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4AE2B3C50BC0073F598 /* IPCManager.swift */; };
+		CEBCC4B02B3C50BC0073F598 /* IPCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4AE2B3C50BC0073F598 /* IPCManager.swift */; };
+		CEBCC4B32B3C51460073F598 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4B22B3C51460073F598 /* Logger.swift */; };
+		CEBCC4B42B3C51460073F598 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4B22B3C51460073F598 /* Logger.swift */; };
+		CEBCC4BA2B3C53020073F598 /* EndpointSecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4B82B3C53020073F598 /* EndpointSecurityManager.swift */; };
+		CEBCC4BD2B3C532F0073F598 /* HandleEventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4BB2B3C532F0073F598 /* HandleEventManager.swift */; };
+		CEBCC4BF2B3C539E0073F598 /* libEndpointSecurity.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CEBCC4B62B3C52290073F598 /* libEndpointSecurity.tbd */; };
+		CEBCC4DF2B3C67B60073F598 /* Endpoint_Security_ManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4DE2B3C67B60073F598 /* Endpoint_Security_ManagerApp.swift */; };
+		CEBCC4E32B3C67B70073F598 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEBCC4E22B3C67B70073F598 /* Assets.xcassets */; };
+		CEBCC4E62B3C67B70073F598 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEBCC4E52B3C67B70073F598 /* Preview Assets.xcassets */; };
+		CEBCC4EC2B3C68F50073F598 /* tmpMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4EB2B3C68F50073F598 /* tmpMain.swift */; };
+		CEBCC4ED2B3C69160073F598 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4B22B3C51460073F598 /* Logger.swift */; };
+		CEBCC4EE2B3C6A130073F598 /* libEndpointSecurity.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CEBCC4B62B3C52290073F598 /* libEndpointSecurity.tbd */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CEBCC4A42B3C50570073F598 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		CE44E6CA2B31D0D100BA4867 /* File Actions Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "File Actions Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE44E6CD2B31D0D100BA4867 /* FileActionsViewerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileActionsViewerApp.swift; sourceTree = "<group>"; };
+		CE44E6CF2B31D0D100BA4867 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		CE44E6D62B31D0D200BA4867 /* File_Actions_Viewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = File_Actions_Viewer.entitlements; sourceTree = "<group>"; };
+		CEBCC4A62B3C50570073F598 /* Endpoint Security */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Endpoint Security"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEBCC4A82B3C50570073F598 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		CEBCC4AE2B3C50BC0073F598 /* IPCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPCManager.swift; sourceTree = "<group>"; };
+		CEBCC4B22B3C51460073F598 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		CEBCC4B62B3C52290073F598 /* libEndpointSecurity.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libEndpointSecurity.tbd; path = usr/lib/libEndpointSecurity.tbd; sourceTree = SDKROOT; };
+		CEBCC4B82B3C53020073F598 /* EndpointSecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointSecurityManager.swift; sourceTree = "<group>"; };
+		CEBCC4BB2B3C532F0073F598 /* HandleEventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleEventManager.swift; sourceTree = "<group>"; };
+		CEBCC4C12B3C59F80073F598 /* Endpoint Security.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Endpoint Security.entitlements"; sourceTree = "<group>"; };
+		CEBCC4DC2B3C67B60073F598 /* Endpoint Security Manager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Endpoint Security Manager.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEBCC4DE2B3C67B60073F598 /* Endpoint_Security_ManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint_Security_ManagerApp.swift; sourceTree = "<group>"; };
+		CEBCC4E22B3C67B70073F598 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CEBCC4E52B3C67B70073F598 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		CEBCC4E72B3C67B70073F598 /* Endpoint_Security_Manager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Endpoint_Security_Manager.entitlements; sourceTree = "<group>"; };
+		CEBCC4EB2B3C68F50073F598 /* tmpMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tmpMain.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CE44E6C72B31D0D100BA4867 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEBCC4A32B3C50570073F598 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEBCC4BF2B3C539E0073F598 /* libEndpointSecurity.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEBCC4D92B3C67B60073F598 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEBCC4EE2B3C6A130073F598 /* libEndpointSecurity.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CE44E6C12B31D0D100BA4867 = {
+			isa = PBXGroup;
+			children = (
+				CEBCC4B12B3C512C0073F598 /* Logs */,
+				CEBCC4AD2B3C50A60073F598 /* IPC */,
+				CE44E6CC2B31D0D100BA4867 /* File Actions Viewer */,
+				CEBCC4A72B3C50570073F598 /* Endpoint Security */,
+				CEBCC4DD2B3C67B60073F598 /* Endpoint Security Manager */,
+				CE44E6CB2B31D0D100BA4867 /* Products */,
+				CEBCC4B52B3C52290073F598 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CE44E6CB2B31D0D100BA4867 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CE44E6CA2B31D0D100BA4867 /* File Actions Viewer.app */,
+				CEBCC4A62B3C50570073F598 /* Endpoint Security */,
+				CEBCC4DC2B3C67B60073F598 /* Endpoint Security Manager.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CE44E6CC2B31D0D100BA4867 /* File Actions Viewer */ = {
+			isa = PBXGroup;
+			children = (
+				CE44E6CD2B31D0D100BA4867 /* FileActionsViewerApp.swift */,
+				CE44E6CF2B31D0D100BA4867 /* ContentView.swift */,
+				CE44E6D62B31D0D200BA4867 /* File_Actions_Viewer.entitlements */,
+			);
+			path = "File Actions Viewer";
+			sourceTree = "<group>";
+		};
+		CEBCC4A72B3C50570073F598 /* Endpoint Security */ = {
+			isa = PBXGroup;
+			children = (
+				CEBCC4C12B3C59F80073F598 /* Endpoint Security.entitlements */,
+				CEBCC4A82B3C50570073F598 /* main.swift */,
+				CEBCC4B82B3C53020073F598 /* EndpointSecurityManager.swift */,
+				CEBCC4BB2B3C532F0073F598 /* HandleEventManager.swift */,
+			);
+			path = "Endpoint Security";
+			sourceTree = "<group>";
+		};
+		CEBCC4AD2B3C50A60073F598 /* IPC */ = {
+			isa = PBXGroup;
+			children = (
+				CEBCC4AE2B3C50BC0073F598 /* IPCManager.swift */,
+			);
+			path = IPC;
+			sourceTree = "<group>";
+		};
+		CEBCC4B12B3C512C0073F598 /* Logs */ = {
+			isa = PBXGroup;
+			children = (
+				CEBCC4B22B3C51460073F598 /* Logger.swift */,
+			);
+			path = Logs;
+			sourceTree = "<group>";
+		};
+		CEBCC4B52B3C52290073F598 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CEBCC4B62B3C52290073F598 /* libEndpointSecurity.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CEBCC4DD2B3C67B60073F598 /* Endpoint Security Manager */ = {
+			isa = PBXGroup;
+			children = (
+				CEBCC4DE2B3C67B60073F598 /* Endpoint_Security_ManagerApp.swift */,
+				CEBCC4E22B3C67B70073F598 /* Assets.xcassets */,
+				CEBCC4E72B3C67B70073F598 /* Endpoint_Security_Manager.entitlements */,
+				CEBCC4E42B3C67B70073F598 /* Preview Content */,
+				CEBCC4EB2B3C68F50073F598 /* tmpMain.swift */,
+			);
+			path = "Endpoint Security Manager";
+			sourceTree = "<group>";
+		};
+		CEBCC4E42B3C67B70073F598 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				CEBCC4E52B3C67B70073F598 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CE44E6C92B31D0D100BA4867 /* File Actions Viewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE44E6D92B31D0D200BA4867 /* Build configuration list for PBXNativeTarget "File Actions Viewer" */;
+			buildPhases = (
+				CE44E6C62B31D0D100BA4867 /* Sources */,
+				CE44E6C72B31D0D100BA4867 /* Frameworks */,
+				CE44E6C82B31D0D100BA4867 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "File Actions Viewer";
+			productName = "File Accessability Controller";
+			productReference = CE44E6CA2B31D0D100BA4867 /* File Actions Viewer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CEBCC4A52B3C50570073F598 /* Endpoint Security */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEBCC4AC2B3C50570073F598 /* Build configuration list for PBXNativeTarget "Endpoint Security" */;
+			buildPhases = (
+				CEBCC4A22B3C50570073F598 /* Sources */,
+				CEBCC4A32B3C50570073F598 /* Frameworks */,
+				CEBCC4A42B3C50570073F598 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Endpoint Security";
+			productName = EndpointSecurity;
+			productReference = CEBCC4A62B3C50570073F598 /* Endpoint Security */;
+			productType = "com.apple.product-type.tool";
+		};
+		CEBCC4DB2B3C67B60073F598 /* Endpoint Security Manager */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEBCC4E82B3C67B70073F598 /* Build configuration list for PBXNativeTarget "Endpoint Security Manager" */;
+			buildPhases = (
+				CEBCC4D82B3C67B60073F598 /* Sources */,
+				CEBCC4D92B3C67B60073F598 /* Frameworks */,
+				CEBCC4DA2B3C67B60073F598 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Endpoint Security Manager";
+			productName = "Endpoint Security Manager";
+			productReference = CEBCC4DC2B3C67B60073F598 /* Endpoint Security Manager.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CE44E6C22B31D0D100BA4867 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					CE44E6C92B31D0D100BA4867 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					CEBCC4A52B3C50570073F598 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					CEBCC4DB2B3C67B60073F598 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = CE44E6C52B31D0D100BA4867 /* Build configuration list for PBXProject "File Actions Viewer" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CE44E6C12B31D0D100BA4867;
+			productRefGroup = CE44E6CB2B31D0D100BA4867 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CE44E6C92B31D0D100BA4867 /* File Actions Viewer */,
+				CEBCC4A52B3C50570073F598 /* Endpoint Security */,
+				CEBCC4DB2B3C67B60073F598 /* Endpoint Security Manager */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CE44E6C82B31D0D100BA4867 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEBCC4DA2B3C67B60073F598 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEBCC4E62B3C67B70073F598 /* Preview Assets.xcassets in Resources */,
+				CEBCC4E32B3C67B70073F598 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CE44E6C62B31D0D100BA4867 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE44E6D02B31D0D100BA4867 /* ContentView.swift in Sources */,
+				CE44E6CE2B31D0D100BA4867 /* FileActionsViewerApp.swift in Sources */,
+				CEBCC4AF2B3C50BC0073F598 /* IPCManager.swift in Sources */,
+				CEBCC4B32B3C51460073F598 /* Logger.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEBCC4A22B3C50570073F598 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEBCC4BA2B3C53020073F598 /* EndpointSecurityManager.swift in Sources */,
+				CEBCC4B02B3C50BC0073F598 /* IPCManager.swift in Sources */,
+				CEBCC4BD2B3C532F0073F598 /* HandleEventManager.swift in Sources */,
+				CEBCC4B42B3C51460073F598 /* Logger.swift in Sources */,
+				CEBCC4A92B3C50570073F598 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEBCC4D82B3C67B60073F598 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CEBCC4DF2B3C67B60073F598 /* Endpoint_Security_ManagerApp.swift in Sources */,
+				CEBCC4EC2B3C68F50073F598 /* tmpMain.swift in Sources */,
+				CEBCC4ED2B3C69160073F598 /* Logger.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CE44E6D72B31D0D200BA4867 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CE44E6D82B31D0D200BA4867 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		CE44E6DA2B31D0D200BA4867 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "File Actions Viewer/File_Actions_Viewer.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = LXGRKJ9CZ9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.new.File-Actions-Viewer";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CE44E6DB2B31D0D200BA4867 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "File Actions Viewer/File_Actions_Viewer.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = LXGRKJ9CZ9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.new.File-Actions-Viewer";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		CEBCC4AA2B3C50570073F598 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Endpoint Security/Endpoint Security.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = LXGRKJ9CZ9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.os33.WorkplaceEndpointSecurityManager;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CEBCC4AB2B3C50570073F598 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Endpoint Security/Endpoint Security.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = LXGRKJ9CZ9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.os33.WorkplaceEndpointSecurityManager;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		CEBCC4E92B3C67B70073F598 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Endpoint Security Manager/Endpoint_Security_Manager.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Endpoint Security Manager/Preview Content\"";
+				DEVELOPMENT_TEAM = LXGRKJ9CZ9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.os33.WorkplaceEndpointSecurityManager;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CEBCC4EA2B3C67B70073F598 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Endpoint Security Manager/Endpoint_Security_Manager.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Endpoint Security Manager/Preview Content\"";
+				DEVELOPMENT_TEAM = LXGRKJ9CZ9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.os33.WorkplaceEndpointSecurityManager;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CE44E6C52B31D0D100BA4867 /* Build configuration list for PBXProject "File Actions Viewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE44E6D72B31D0D200BA4867 /* Debug */,
+				CE44E6D82B31D0D200BA4867 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE44E6D92B31D0D200BA4867 /* Build configuration list for PBXNativeTarget "File Actions Viewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE44E6DA2B31D0D200BA4867 /* Debug */,
+				CE44E6DB2B31D0D200BA4867 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEBCC4AC2B3C50570073F598 /* Build configuration list for PBXNativeTarget "Endpoint Security" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEBCC4AA2B3C50570073F598 /* Debug */,
+				CEBCC4AB2B3C50570073F598 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEBCC4E82B3C67B70073F598 /* Build configuration list for PBXNativeTarget "Endpoint Security Manager" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEBCC4E92B3C67B70073F598 /* Debug */,
+				CEBCC4EA2B3C67B70073F598 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CE44E6C22B31D0D100BA4867 /* Project object */;
+}
