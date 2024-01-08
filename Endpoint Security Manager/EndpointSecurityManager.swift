@@ -50,7 +50,7 @@ class EndpointSecurityManager {
     func setup() {
         initializeClient()
         subscribeToEvents()
-        Logger.log(message: "client installed")
+        Logger.log(message: "Client installed")
     }
     
     deinit {
@@ -65,7 +65,16 @@ class HandleEventManager {
     func handleEventMessage(_ client: OpaquePointer, _ msg: UnsafePointer<es_message_t>) {
        switch msg.pointee.event_type {
         case ES_EVENT_TYPE_NOTIFY_OPEN:
-           Logger.log(message: "xxx We are in open YO")
+           if let path = msg.pointee.event.open.file.pointee.path.data {
+               for filePath in Endpoint_Security_ManagerApp.files {
+                   if filePath.pathToFile.contains(String(cString: path)) {
+                       Logger.log(message: "Added file \(String(cString: path))")
+                   }
+               }
+           }
+           else {
+               Logger.log(message: "Can't get file path from message")
+           }
         default:
             Logger.log(message: "Unexpected event type encountered: \(msg.pointee.event_type.rawValue)")
         }
