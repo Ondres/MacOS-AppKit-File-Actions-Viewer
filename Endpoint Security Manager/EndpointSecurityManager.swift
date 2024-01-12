@@ -5,7 +5,7 @@ import EndpointSecurity
 class EndpointSecurityManager {
     private var client: OpaquePointer?
     
-    private let events = [
+    private var events = [
         ES_EVENT_TYPE_NOTIFY_OPEN,
     ]
 
@@ -19,7 +19,9 @@ class EndpointSecurityManager {
         }
     }
 
-    private func subscribeToEvents() {
+    private func subscribeToEvents(eventsToSubscribe: [es_event_type_t]) {
+        Logger.log(message: "Subscribe on events: \(eventsToSubscribe)")
+        
         guard let client = client else {
             Logger.log(message: "Client is nil")
             return
@@ -30,31 +32,58 @@ class EndpointSecurityManager {
             Logger.log(message: "Failed to clear cache")
         }
         
-        let result = es_subscribe(client, events, UInt32(events.count))
+        let result = es_subscribe(client, eventsToSubscribe, UInt32(events.count))
         if result != ES_RETURN_SUCCESS {
             Logger.log(message: "Failed to subscribe events")
         }
     }
     
-    private func unsubscribeFromEvents() {
+    private func unsubscribeFromEvents(eventsToUnsubscribe: [es_event_type_t]) {
+        Logger.log(message: "UnsubScribe from events: \(eventsToUnsubscribe)")
+        
         guard let client = client else {
             Logger.log(message: "Client is nil")
             return
         }
-        let result = es_unsubscribe(client, events, UInt32(events.count))
+        let result = es_unsubscribe(client, eventsToUnsubscribe, UInt32(events.count))
         if result != ES_RETURN_SUCCESS {
             Logger.log(message: "Failed to unsubscribe events")
         }
     }
     
+    func subscribeNewConfigurationIfNeeded(newEvents: [es_event_type_t]) {
+        let eventsToUnsubscribe = events.filter { !newEvents.contains($0) }
+        let eventsToSubscribe = newEvents.filter { !events.contains($0) }
+        if (!eventsToUnsubscribe.isEmpty) {
+            unsubscribeFromEvents(eventsToUnsubscribe: eventsToUnsubscribe)
+        }
+        if (!eventsToSubscribe.isEmpty) {
+            subscribeToEvents(eventsToSubscribe: eventsToSubscribe)
+        }
+        if (eventsToSubscribe.isEmpty && eventsToUnsubscribe.isEmpty) {
+            Logger.log(message: "Nothing to update")
+        }
+        else {
+            events = newEvents
+            Logger.log(message: "Events were updated")
+        }
+    }
+    
     func setup() {
         initializeClient()
-        subscribeToEvents()
+        subscribeToEvents(eventsToSubscribe: events)
         Logger.log(message: "Client installed")
     }
     
+    func updateEvents() {
+        while true {
+            sleep(3)
+            subscribeNewConfigurationIfNeeded(newEvents: EndpointSecurityManagerApp.events)
+        }
+    }
+    
     deinit {
-        unsubscribeFromEvents()
+        unsubscribeFromEvents(eventsToUnsubscribe: events)
         es_delete_client(client)
         client = nil
     }
@@ -66,11 +95,6 @@ class HandleEventManager {
        switch msg.pointee.event_type {
         case ES_EVENT_TYPE_NOTIFY_OPEN:
            if let path = msg.pointee.event.open.file.pointee.path.data {
-               for filePath in Endpoint_Security_ManagerApp.files {
-                   if filePath.pathToFile.contains(String(cString: path)) {
-                       Logger.log(message: "Added file \(String(cString: path))")
-                   }
-               }
            }
            else {
                Logger.log(message: "Can't get file path from message")

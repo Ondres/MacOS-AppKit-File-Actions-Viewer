@@ -2,82 +2,42 @@ import SwiftUI
 import AppKit
 
 struct ContentView: View {
-    @State public var files:[FullFileInfo] = []
-    @State private var isEditSettingsViewPresented = false
-    @State public var settings = SettingsModel(trackOpenClose: false, trackRenameEdit: false, trackMoveDelete: false)
     private let ipcManager = IPCManager()
-    
+    @State private var logText: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 
     var body: some View {
-        ZStack {
-            Color(.white)
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack(spacing: 20) {
-                Spacer()
-                
-                HStack(spacing: 200) {
-                    VStack(spacing: 400) {
-                        Button("Add file") {
-                            if let filePath = openFilePicker() {
-                                files.append(FullFileInfo(settings: SettingsModel(trackOpenClose: false, trackRenameEdit: false,trackMoveDelete: false), pathToFile: filePath))
-                                
-                                ipcManager.sendMessage("\(filePath) \(false) \(false) \(false)")
-                            }
-                        }
-                        .buttonStyle(MainButtonStyle())
-                        .frame(width: 100)
-                        
-                        Spacer()
-                    }.sheet(isPresented: $isEditSettingsViewPresented) {
-                        EditSettingsView(isOpen: $isEditSettingsViewPresented, settings: settings, ipcManager: ipcManager)
-                    }
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 10) {
-                            ForEach(files.indices, id: \.self) { index in
-                                FileWidgetView(
-                                filePath: files[index].pathToFile,
-                                onDelete: { deleteFile(at: index) },
-                                onEdit: { editFile(at: index) })
-                            .frame(width: 500)
-                            .onTapGesture {
-                            }
-                            }
-                        }
-                    }
-                    .frame(maxWidth: 800)
+        HStack {
+            VStack(alignment: .leading, spacing: 20) {
+                Button("Add/Remove Files Opening event observer") {
+                    callAddOrRemoveObserver(key: Constants.OPEN_KEY)
                 }
                 
-                Spacer()
+                Button("Add/Remove Files Moving event observer") {
+                    callAddOrRemoveObserver(key: Constants.MOVE_KEY)
+                }
+                
+                Button("Add/Remove Files Unlinking event observer") {
+                    callAddOrRemoveObserver(key: Constants.UNLINK_KEY)
+                }
             }
-            .frame(width: 800, height: 600)
+            .padding()
+            
+            VStack {
+                TextEditor(text: $logText)
+                    .padding()
+                    .frame(minWidth: 400, minHeight: 400)
+            }
         }
+        .frame(width: 800, height: 600)
+        .padding()
     }
     
-    private func openFilePicker() -> String? {
-        let dialog = NSOpenPanel()
-        
-        dialog.title = "Choose file or directory"
-        dialog.showsResizeIndicator = true
-        dialog.showsHiddenFiles = false
-        dialog.canChooseDirectories = true
-        dialog.canChooseFiles = true
-        dialog.allowsMultipleSelection = false
-        
-        if dialog.runModal() == .OK {
-            let result = dialog.url
-            return result?.path
-        } else {
-            return nil
-        }
+    private func callAddOrRemoveObserver(key: String) {
+        addOrRemoveObserver(key: key, shouldBeSubscribedOnEvent: &Constants.configuration[key]!.1)
     }
     
-    private func deleteFile(at index: Int) {
-        files.remove(at: index)
-    }
-    
-    private func editFile(at index: Int) {
-        settings = files[index].settings
-        isEditSettingsViewPresented.toggle()
+    private func addOrRemoveObserver(key: String, shouldBeSubscribedOnEvent: inout Bool) {
+        shouldBeSubscribedOnEvent = !shouldBeSubscribedOnEvent
+        ipcManager.sendMessage("\(key) \(shouldBeSubscribedOnEvent)")
     }
 }

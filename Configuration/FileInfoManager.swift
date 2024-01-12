@@ -1,24 +1,20 @@
 import Foundation
 import SwiftUI
+import EndpointSecurity
 
-class SettingsModel: ObservableObject {
-    @Published var trackOpenClose: Bool
-    @Published var trackRenameEdit: Bool
-    @Published var trackMoveDelete: Bool
+class Constants {   
+    static let OPEN_KEY: String = "OPEN"
+    static let MOVE_KEY: String = "MOVE"
+    static let UNLINK_KEY: String = "UNLINK"
 
-    init(trackOpenClose: Bool, trackRenameEdit: Bool, trackMoveDelete: Bool) {
-        self.trackOpenClose = trackOpenClose
-        self.trackRenameEdit = trackRenameEdit
-        self.trackMoveDelete = trackMoveDelete
-    }
+    static var configuration: [String: (es_event_type_t, Bool)] = [
+        OPEN_KEY: (ES_EVENT_TYPE_NOTIFY_OPEN, false),
+        MOVE_KEY: (ES_EVENT_TYPE_NOTIFY_UNLINK, false),
+        UNLINK_KEY: (ES_EVENT_TYPE_NOTIFY_RENAME, false)
+    ]
 }
 
-class FullFileInfo: ObservableObject, Identifiable {
-    @Published var settings: SettingsModel
-    @Published var pathToFile: String
-
-    init(settings: SettingsModel, pathToFile: String) {
-        self.settings = settings
-        self.pathToFile = pathToFile
-    }
+struct Tuple {
+    var event: es_event_type_t
+    var shouldBeSubscribedOnEvent: Bool
 }
