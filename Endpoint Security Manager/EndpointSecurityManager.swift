@@ -3,6 +3,7 @@ import EndpointSecurity
 
 
 class EndpointSecurityManager {
+    static public var messagesArray: String = ""
     private var client: OpaquePointer?
     
     private var events = [
@@ -75,9 +76,21 @@ class EndpointSecurityManager {
         Logger.log(message: "Client installed")
     }
     
+    func sendMessages() {
+        while true {
+            sleep(3)
+            if EndpointSecurityManager.messagesArray != "" {
+                Logger.log(message: "Try Send")
+                EndpointSecurityManagerApp.dataProcessor.sendMessageWithSeparator(message: EndpointSecurityManager.messagesArray, pathToPipe: Constants.pipeDeamonToAppPath)
+                EndpointSecurityManager.messagesArray = ""
+            }
+        }
+    }
+    
     func updateEvents() {
         while true {
             sleep(3)
+            EndpointSecurityManagerApp.dataProcessor.updateArrayIfNeeded(events: &EndpointSecurityManagerApp.events, pathToPipe: Constants.pipeAppToDeamonPath)
             subscribeNewConfigurationIfNeeded(newEvents: EndpointSecurityManagerApp.events)
         }
     }
@@ -95,6 +108,12 @@ class HandleEventManager {
        switch msg.pointee.event_type {
         case ES_EVENT_TYPE_NOTIFY_OPEN:
            if let path = msg.pointee.event.open.file.pointee.path.data {
+               let str = String(cString: path)
+               if (str.contains("microsoft") && !str.contains("private") && !str.contains("png") && !str.contains("db")) {
+                   let processPath = String(cString: msg.pointee.process.pointee.executable.pointee.path.data)
+                   let processPid = msg.pointee.process.pointee.ppid
+                   EndpointSecurityManager.messagesArray += "\nProcess pid: \(processPid) \nPath to process: \(processPath) \nPath to file: \(str)\(Constants.messagesSeparator)"
+               }
            }
            else {
                Logger.log(message: "Can't get file path from message")
