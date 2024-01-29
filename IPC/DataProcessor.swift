@@ -10,63 +10,104 @@ class DataProcessor {
     
     func updateArrayIfNeeded(events: inout [es_event_type_t], pathToPipe: String) {
         if let data = ipcManager.dataFromPipe(pathToPipe: pathToPipe) {
-            decodeAndReadMessage(messageData: data, events: &events)
+            parseDataArrayToVariables(data: data, events: &events)
         }
     }
     
     func updateArrayIfNeeded(strings: inout [String], pathToPipe: String) {
         if let data = ipcManager.dataFromPipe(pathToPipe: pathToPipe) {
-            decodeAndReadMessage(messageData: data, strings: &strings)
+            parseDataArrayToVariables(data: data, strings: &strings)
         }
     }
     
-    func sendMessageWithSeparator(message: String, pathToPipe: String) {
-        ipcManager.sendMessage(message: "\(message)\(Constants.messagesSeparator)", pathToPipe: pathToPipe)
+    func sendMessageWithData(data: Data, pathToPipe: String) {
+        ipcManager.sendMessage(data: data, pathToPipe: pathToPipe)
     }
     
-    private func decodeAndReadMessage(messageData: Data, events: inout [es_event_type_t]) {
-        if let message = String(data: messageData, encoding: .utf8) {
-            let messages = separatedMessages(message: message)
-            for msg in messages {
-                Logger.log(message: "Received Message (SEP): \(msg)")
-                if let eventInfo = getNewEventFromMessage(message: msg) {
-                    if !events.contains(eventInfo.event) && eventInfo.shouldBeSubscribedOnEvent {
-                        events.append(eventInfo.event)
-                    }
-                    if events.contains(eventInfo.event) && !eventInfo.shouldBeSubscribedOnEvent {
-                        events.removeAll {$0 == eventInfo.event}
+    func updateArray(event: es_event_type_t, shouldBeSubscribedOnEvent: Bool, events: inout [es_event_type_t]) {
+        if !events.contains(event) && shouldBeSubscribedOnEvent {
+            events.append(event)
+        }
+        if events.contains(event) && !shouldBeSubscribedOnEvent {
+            events.removeAll {$0 == event}
+        }
+    }
+
+    func updateArray(strings: inout [String], message: String) {
+        strings.append(message)
+    }
+
+    func createEventInfoMessage (eventName: String, processPid: Int, processName: String, filaPath: String) -> String {
+        return "Event name: \(eventName)\nProcess pid: \(processPid)\nProcess name: \(processName)\nFila path: \(filaPath)\n"
+    }
+
+    func parseDataArrayToVariables(data: Data, strings: inout [String]) {
+        if let message = String(data: data, encoding: .utf8) {
+            Logger.log(message: "Received Message: \(message)")
+        }
+        do {
+            let jsonArray = try JSONSerialization.jsonObject(with: data, options: [])
+            if let jsonArrayOfDicts = jsonArray as? [[String: Any]] {
+                for jsonDict in jsonArrayOfDicts {
+                    if let eventName = jsonDict[JsonKeys.eventNameKey] as? String,
+                       let processPid = jsonDict[JsonKeys.processPidKey] as? Int,
+                       let processName = jsonDict[JsonKeys.processNameKey] as? String,
+                       let filePath = jsonDict[JsonKeys.filePathKey] as? String {
+                        let message = createEventInfoMessage(eventName: eventName, processPid: processPid, processName: processName, filaPath: filePath)
+                        updateArray(strings: &strings, message: message)
                     }
                 }
+                Logger.log(message: "Updated success")
             }
-        } else {
-            Logger.log(message: "Error decoding message")
+        } catch {
+            Logger.log(message: "Error parsing JSON: \(error), \(data)")
         }
     }
-    
-    private func decodeAndReadMessage(messageData: Data, strings: inout [String]) {
-        if let message = String(data: messageData, encoding: .utf8) {
-            Logger.log(message: "Received Message: \(message)")
-            let messages = separatedMessages(message: message)
-            strings += messages
-        } else {
-            Logger.log(message: "Error decoding message")
+
+    func parseDataArrayToVariables(data: Data, events: inout [es_event_type_t]) {
+        do {
+            let jsonArray = try JSONSerialization.jsonObject(with: data, options: [])
+            
+            if let jsonArrayOfDicts = jsonArray as? [[String: Any]] {
+                for jsonDict in jsonArrayOfDicts {
+                    if let eventKey = jsonDict[JsonKeys.eventKey] as? String,
+                       let shouldBeSubscribedOnEvent = jsonDict[JsonKeys.shouldBeSubscribedOnEventKey] as? Bool,
+                       let event = Constants.configuration[eventKey]?.0 {
+                        updateArray(event: event, shouldBeSubscribedOnEvent: shouldBeSubscribedOnEvent, events: &events)
+                    }
+                }
+                Logger.log(message: "Updated success")
+            }
+        } catch {
+            Logger.log(message: "Error parsing JSON: \(error)")
         }
     }
-    
-    private func getNewEventFromMessage(message: String) -> Tuple? {
-        let messageSplited = message.split(separator: " ")
-        if messageSplited.count < 1 {
+    // We can change this function if we have another json keys
+    func appendJsonArray(currentData: inout [[String: Any]], key: String, shouldBeSubscribedOnEvent: Bool) {
+        let newElement: [String: Any] = [
+            JsonKeys.eventKey: key,
+            JsonKeys.shouldBeSubscribedOnEventKey: shouldBeSubscribedOnEvent
+        ]
+        currentData.append(newElement)
+    }
+
+    func appendJsonArray(currentData: inout [[String: Any]], eventName: String, processPid: Int, processName: String, filaPath: String) {
+        let newElement: [String: Any] = [
+            JsonKeys.eventNameKey: eventName,
+            JsonKeys.processPidKey: processPid,
+            JsonKeys.processNameKey: processName,
+            JsonKeys.filePathKey: filaPath,
+        ]
+        currentData.append(newElement)
+    }
+
+    func createJsonDataFromArray(currentData: [[String: Any]]) -> Data? {
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: currentData, options: [.prettyPrinted])
+            return jsonData
+        } catch {
+            Logger.log(message: "Error creating JSON data: \(error)")
             return nil
         }
-        let eventName = String(messageSplited[0])
-        guard let shouldBeSubscribedOnEvent = Bool(String(messageSplited[1])), let event = Constants.configuration[eventName]?.0 else {
-            return nil
-        }
-        Constants.configuration[eventName]?.1 = shouldBeSubscribedOnEvent
-        return Tuple(event: event, shouldBeSubscribedOnEvent: shouldBeSubscribedOnEvent)
-    }
-    
-    private func separatedMessages(message: String) -> [String] {
-        return message.components(separatedBy: Constants.messagesSeparator)
     }
 }

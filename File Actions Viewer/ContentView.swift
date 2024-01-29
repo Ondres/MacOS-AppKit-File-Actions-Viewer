@@ -13,19 +13,20 @@ class ViewModel: ObservableObject {
 struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
     @State private var timer: Timer?
+    @State var dataToSend: [[String:Any]] = []
     private let dataProcessor = DataProcessor(pathToPipe: Constants.pipeAppToDeamonPath)
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 20) {
-                Button("Start listening") {
-                    startTimer()
+                Button("Start Reading/Writing with 1 second repeating interval") {
+                    startTimerForRead()
+                    startTimerForWrite()
                 }.onDisappear {
                     timer?.invalidate()
                 }
 
                 Button("Add/Remove Files Opening event observer") {
-                    viewModel.addNewTextLine()
-                    //callAddOrRemoveObserver(key: Constants.OPEN_KEY)
+                    callAddOrRemoveObserver(key: Constants.OPEN_KEY)
                 }
                 
                 Button("Add/Remove Files Moving event observer") {
@@ -56,14 +57,25 @@ struct ContentView: View {
     
     private func addOrRemoveObserver(key: String, shouldBeSubscribedOnEvent: inout Bool) {
         shouldBeSubscribedOnEvent = !shouldBeSubscribedOnEvent
-        let message = "\(key) \(shouldBeSubscribedOnEvent)"
-        dataProcessor.sendMessageWithSeparator(message: message, pathToPipe: Constants.pipeAppToDeamonPath)
+        dataProcessor.appendJsonArray(currentData: &dataToSend, key: key, shouldBeSubscribedOnEvent: shouldBeSubscribedOnEvent)
     }
     
-    func startTimer() {
+    func startTimerForRead() {
         Logger.log(message: "Get new Messages")
-            timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
-                dataProcessor.updateArrayIfNeeded(strings: &viewModel.logText, pathToPipe: Constants.pipeDeamonToAppPath)
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            dataProcessor.updateArrayIfNeeded(strings: &viewModel.logText, pathToPipe: Constants.pipeDeamonToAppPath)
+        }
+    }
+    
+    func startTimerForWrite() {
+        Logger.log(message: "Send new Messages")
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            if !dataToSend.isEmpty {
+                if let data = dataProcessor.createJsonDataFromArray(currentData: dataToSend) {
+                    dataProcessor.sendMessageWithData(data: data, pathToPipe: Constants.pipeAppToDeamonPath)
+                    dataToSend.removeAll()
+                }
             }
         }
+    }
 }

@@ -2,11 +2,7 @@ import Foundation
 import EndpointSecurity
 
 class IPCManager {
-   // var pathToPipe: String
-  //init(pathToPipe: String) {
-     //   self.pathToPipe = pathToPipe
-   // }
-    func sendMessage(message: String, pathToPipe: String) {
+    func sendMessage(data: Data, pathToPipe: String) {
         Logger.log(message: "Start sending \(pathToPipe)")
         cretePipeIfNeeded(pathToPipe: pathToPipe)
         
@@ -21,7 +17,7 @@ class IPCManager {
             return
         }
 
-        let bytesWritten = write(fileDescriptor, message, strlen(message))
+        let bytesWritten = write(fileDescriptor, (data as NSData).bytes, data.count)
         if bytesWritten == -1 {
             let errnoDescription = String(cString: strerror(errno))
             Logger.log(message: "Error opening pipe: WRITE \(errnoDescription)")
@@ -45,7 +41,7 @@ class IPCManager {
     }
     
     private func readFromPipe(fileDescriptor: Int32) -> Data? {
-        var buffer = [UInt8](repeating: 0, count: 1024)
+        var buffer = [UInt8](repeating: 0, count: Constants.MAX_DATA_BYTES)
         let bytesRead = read(fileDescriptor, &buffer, buffer.count)
         switch bytesRead {
         case _ where bytesRead > 0:

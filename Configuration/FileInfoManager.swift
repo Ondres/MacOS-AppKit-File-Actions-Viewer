@@ -3,6 +3,8 @@ import SwiftUI
 import EndpointSecurity
 
 class Constants {
+    static let MAX_DATA_BYTES = 7168 // Enough for ~30 arrays with information about events
+    static let CHUNK_SIZE = 20
     static let OPEN_KEY: String = "OPEN"
     static let MOVE_KEY: String = "MOVE"
     static let UNLINK_KEY: String = "UNLINK"
@@ -17,12 +19,12 @@ class Constants {
     ]
 }
 
-struct Tuple {
-    var event: es_event_type_t
-    var shouldBeSubscribedOnEvent: Bool
-}
-
-enum pipeOwner {
-    case eventsViewerApp
-    case esmDeamon
+class JsonKeys {
+    static let eventKey = "event"
+    static let shouldBeSubscribedOnEventKey = "shouldBeSubscribedOnEvent"
+    
+    static let eventNameKey = "eventName"
+    static let processPidKey = "processPid"
+    static let processNameKey = "processName"
+    static let filePathKey = "filePath"
 }
