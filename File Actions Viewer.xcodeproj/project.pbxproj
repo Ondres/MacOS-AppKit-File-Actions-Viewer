@@ -12,6 +12,8 @@
 		CE1B79752B48913F00F86CFD /* FileInfoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE1B79732B48913F00F86CFD /* FileInfoManager.swift */; };
 		CE44E6CE2B31D0D100BA4867 /* FileActionsViewerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE44E6CD2B31D0D100BA4867 /* FileActionsViewerApp.swift */; };
 		CE44E6D02B31D0D100BA4867 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE44E6CF2B31D0D100BA4867 /* ContentView.swift */; };
+		CE4DC2192B5D4A9000BBA992 /* DataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4DC2182B5D4A9000BBA992 /* DataProcessor.swift */; };
+		CE4DC21A2B5D4A9000BBA992 /* DataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE4DC2182B5D4A9000BBA992 /* DataProcessor.swift */; };
 		CEBCC4AF2B3C50BC0073F598 /* IPCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4AE2B3C50BC0073F598 /* IPCManager.swift */; };
 		CEBCC4B32B3C51460073F598 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4B22B3C51460073F598 /* Logger.swift */; };
 		CEBCC4DF2B3C67B60073F598 /* EndpointSecurityManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEBCC4DE2B3C67B60073F598 /* EndpointSecurityManagerApp.swift */; };
@@ -26,6 +28,7 @@
 		CE44E6CD2B31D0D100BA4867 /* FileActionsViewerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileActionsViewerApp.swift; sourceTree = "<group>"; };
 		CE44E6CF2B31D0D100BA4867 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CE44E6D62B31D0D200BA4867 /* File_Actions_Viewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = File_Actions_Viewer.entitlements; sourceTree = "<group>"; };
+		CE4DC2182B5D4A9000BBA992 /* DataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataProcessor.swift; sourceTree = "<group>"; };
 		CEBCC4AE2B3C50BC0073F598 /* IPCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPCManager.swift; sourceTree = "<group>"; };
 		CEBCC4B22B3C51460073F598 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		CEBCC4B62B3C52290073F598 /* libEndpointSecurity.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libEndpointSecurity.tbd; path = usr/lib/libEndpointSecurity.tbd; sourceTree = SDKROOT; };
@@ -98,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				CEBCC4AE2B3C50BC0073F598 /* IPCManager.swift */,
+				CE4DC2182B5D4A9000BBA992 /* DataProcessor.swift */,
 			);
 			path = IPC;
 			sourceTree = "<group>";
@@ -226,6 +230,7 @@
 			files = (
 				CE44E6D02B31D0D100BA4867 /* ContentView.swift in Sources */,
 				CE44E6CE2B31D0D100BA4867 /* FileActionsViewerApp.swift in Sources */,
+				CE4DC2192B5D4A9000BBA992 /* DataProcessor.swift in Sources */,
 				CEBCC4AF2B3C50BC0073F598 /* IPCManager.swift in Sources */,
 				CEBCC4B32B3C51460073F598 /* Logger.swift in Sources */,
 				CE1B79742B48913F00F86CFD /* FileInfoManager.swift in Sources */,
@@ -238,6 +243,7 @@
 			files = (
 				CEBCC4DF2B3C67B60073F598 /* EndpointSecurityManagerApp.swift in Sources */,
 				CEBCC4EC2B3C68F50073F598 /* EndpointSecurityManager.swift in Sources */,
+				CE4DC21A2B5D4A9000BBA992 /* DataProcessor.swift in Sources */,
 				CE1B796E2B488E3500F86CFD /* IPCManager.swift in Sources */,
 				CE1B79752B48913F00F86CFD /* FileInfoManager.swift in Sources */,
 				CEBCC4ED2B3C69160073F598 /* Logger.swift in Sources */,
