@@ -4,24 +4,24 @@ import EndpointSecurity
 class DataProcessor {
     let ipcManager: IPCManager
 
-    init(pathToPipe: String) {
-        self.ipcManager = IPCManager()
+    init(pathToWrite: String, pathToRead: String) {
+        self.ipcManager = IPCManager(pathToWrite: pathToWrite, pathToRead: pathToRead)
     }
     
-    func updateArrayIfNeeded(events: inout [es_event_type_t], pathToPipe: String) {
-        if let data = ipcManager.dataFromPipe(pathToPipe: pathToPipe) {
+    func updateArrayIfNeeded(events: inout [es_event_type_t]) {
+        if let data = ipcManager.dataFromPipe() {
             parseDataArrayToVariables(data: data, events: &events)
         }
     }
     
-    func updateArrayIfNeeded(strings: inout [String], pathToPipe: String) {
-        if let data = ipcManager.dataFromPipe(pathToPipe: pathToPipe) {
+    func updateArrayIfNeeded(strings: inout [String]) {
+        if let data = ipcManager.dataFromPipe() {
             parseDataArrayToVariables(data: data, strings: &strings)
         }
     }
     
-    func sendMessageWithData(data: Data, pathToPipe: String) {
-        ipcManager.sendMessage(data: data, pathToPipe: pathToPipe)
+    func sendMessageWithData(data: Data) {
+        ipcManager.sendMessage(data: data)
     }
     
     func updateArray(event: es_event_type_t, shouldBeSubscribedOnEvent: Bool, events: inout [es_event_type_t]) {

@@ -14,7 +14,7 @@ struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
     @State private var timer: Timer?
     @State var dataToSend: [[String:Any]] = []
-    private let dataProcessor = DataProcessor(pathToPipe: Constants.pipeAppToDeamonPath)
+    private let dataProcessor = DataProcessor(pathToWrite: Constants.pipeAppToDeamonPath, pathToRead: Constants.pipeDeamonToAppPath)
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 20) {
@@ -63,7 +63,7 @@ struct ContentView: View {
     func startTimerForRead() {
         Logger.log(message: "Get new Messages")
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            dataProcessor.updateArrayIfNeeded(strings: &viewModel.logText, pathToPipe: Constants.pipeDeamonToAppPath)
+            dataProcessor.updateArrayIfNeeded(strings: &viewModel.logText)
         }
     }
     
@@ -72,7 +72,7 @@ struct ContentView: View {
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             if !dataToSend.isEmpty {
                 if let data = dataProcessor.createJsonDataFromArray(currentData: dataToSend) {
-                    dataProcessor.sendMessageWithData(data: data, pathToPipe: Constants.pipeAppToDeamonPath)
+                    dataProcessor.sendMessageWithData(data: data)
                     dataToSend.removeAll()
                 }
             }

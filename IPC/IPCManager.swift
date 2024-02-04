@@ -2,40 +2,65 @@ import Foundation
 import EndpointSecurity
 
 class IPCManager {
-    func sendMessage(data: Data, pathToPipe: String) {
-        Logger.log(message: "Start sending \(pathToPipe)")
-        cretePipeIfNeeded(pathToPipe: pathToPipe)
-        
-        let fileDescriptor = open(pathToPipe, O_RDWR | O_NONBLOCK)
-        defer {
-            close(fileDescriptor)
-        }
-        
-        if fileDescriptor == -1 {
-            let errnoDescription = String(cString: strerror(errno))
-            Logger.log(message: "Error opening pipe: OPEN \(errnoDescription)")
-            return
-        }
+    var writefileDescriptor: Int32 = -1
+    var readFileDescriptor: Int32 = -1
+    var pathToWrite: String = ""
+    var pathToRead: String = ""
 
+    init(pathToWrite: String, pathToRead: String) {
+        self.pathToRead = pathToRead
+        self.pathToWrite = pathToWrite
+        openReadDescriptor()
+    }
+    
+    func openReadDescriptor() {
+        readFileDescriptor = open(pathToRead, O_RDONLY | O_NONBLOCK)
+        if readFileDescriptor == -1 {
+            let errnoDescription = String(cString: strerror(errno))
+            Logger.log(message: "Error opening pipe: \(errnoDescription)")
+        }
+    }
+    
+    func openWriteDescriptor() {
+        writefileDescriptor = open(pathToWrite, O_RDWR | O_NONBLOCK)
+        if writefileDescriptor == -1 {
+            let errnoDescription = String(cString: strerror(errno))
+            Logger.log(message: "Error opening pipe: \(errnoDescription)")
+        }
+    }
+    
+    func closeReadDescriptor() {
+        close(readFileDescriptor)
+    }
+    
+    func closeWriteDescriptor() {
+        close(writefileDescriptor)
+    }
+    
+    deinit {
+        closeReadDescriptor()
+        closeWriteDescriptor()
+    }
+    
+    func sendMessage(data: Data) {
+        openWriteDescriptor()
+        let fileDescriptor = writefileDescriptor
         let bytesWritten = write(fileDescriptor, (data as NSData).bytes, data.count)
+        closeWriteDescriptor()
         if bytesWritten == -1 {
             let errnoDescription = String(cString: strerror(errno))
             Logger.log(message: "Error opening pipe: WRITE \(errnoDescription)")
             return
         } else {
-            Logger.log(message: "Write successful. Bytes written: \(bytesWritten), to \(pathToPipe)")
+            Logger.log(message: "Write successful. Bytes written: \(bytesWritten)")
         }
     }
     
-    func dataFromPipe(pathToPipe: String) -> Data? {
-        cretePipeIfNeeded(pathToPipe: pathToPipe)
-        
-        let fileDescriptor = open(pathToPipe, O_RDONLY | O_NONBLOCK)
-        
-        if fileDescriptor == -1 {
-            let errnoDescription = String(cString: strerror(errno))
-            Logger.log(message: "Error opening pipe: \(errnoDescription)")
-            return nil
+    func dataFromPipe() -> Data? {
+        openReadDescriptor()
+        let fileDescriptor = readFileDescriptor
+        defer {
+            closeReadDescriptor()
         }
         return readFromPipe(fileDescriptor: fileDescriptor)
     }
@@ -46,8 +71,8 @@ class IPCManager {
         switch bytesRead {
         case _ where bytesRead > 0:
             return getData(buffer: buffer, bytesRead: bytesRead)
-        case 0: 
-            Logger.log(message: "No data read from pipe ")
+        case 0:
+            Logger.log(message: "No data read from pipe")
             return nil
         default:
             let errnoDescription = String(cString: strerror(errno))
