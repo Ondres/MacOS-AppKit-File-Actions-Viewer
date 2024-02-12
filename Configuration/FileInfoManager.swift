@@ -7,17 +7,17 @@ class Constants {
     static let CHUNK_SIZE = 20
     static let SLEEP_TIME_FOR_BLOCKER: useconds_t = 500000
     static let SLEEP_TIME_FOR_ESM: useconds_t = 3
+    static let SLEEP_TIME_FOR_UPDATING: Double = 1
     static let OPEN_KEY: String = "OPEN"
     static let MOVE_KEY: String = "MOVE"
     static let UNLINK_KEY: String = "UNLINK"
-    static let messagesSeparator = " End Message. "
     static let pipeDeamonToAppPath = "/Users/user/Documents/pipeDeamonToApp"
     static let pipeAppToDeamonPath = "/Users/user/Documents/pipeAppToDeamon"
 
     static var configuration: [String: (es_event_type_t, Bool)] = [
-        OPEN_KEY: (ES_EVENT_TYPE_NOTIFY_OPEN, true),
-        MOVE_KEY: (ES_EVENT_TYPE_NOTIFY_UNLINK, false),
-        UNLINK_KEY: (ES_EVENT_TYPE_NOTIFY_RENAME, false)
+        OPEN_KEY: (ES_EVENT_TYPE_NOTIFY_OPEN, false),
+        MOVE_KEY: (ES_EVENT_TYPE_NOTIFY_RENAME, false),
+        UNLINK_KEY: (ES_EVENT_TYPE_NOTIFY_UNLINK, false)
     ]
 }
 

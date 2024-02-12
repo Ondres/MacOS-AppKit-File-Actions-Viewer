@@ -8,6 +8,8 @@ class IPCManager {
     var pathToRead: String = ""
 
     init(pathToWrite: String, pathToRead: String) {
+        cretePipeIfNeeded(pathToPipe: pathToRead)
+        cretePipeIfNeeded(pathToPipe: pathToWrite)
         self.pathToRead = pathToRead
         self.pathToWrite = pathToWrite
         openReadDescriptor()
@@ -38,6 +40,7 @@ class IPCManager {
     }
     
     deinit {
+        Logger.log(message: "Close opened file descriptors, deinitialize IPC manager")
         closeReadDescriptor()
         closeWriteDescriptor()
     }

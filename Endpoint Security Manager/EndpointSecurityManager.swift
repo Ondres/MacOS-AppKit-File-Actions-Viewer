@@ -3,7 +3,7 @@ import EndpointSecurity
 
 
 class EndpointSecurityManager {
-    var events: [es_event_type_t] = [ES_EVENT_TYPE_NOTIFY_OPEN]
+    var events: [es_event_type_t] = []
     var dataToSend: [[String: Any]] = []
     let dataProcessor = DataProcessor(pathToWrite: Constants.pipeDeamonToAppPath, pathToRead: Constants.pipeAppToDeamonPath)
     static public var messagesArray: String = ""
@@ -17,6 +17,8 @@ class EndpointSecurityManager {
         }
         if result != ES_NEW_CLIENT_RESULT_SUCCESS {
             Logger.log(message: "Failed to create new ES client: \(result)")
+        } else {
+            Logger.log(message: "Client installed")
         }
     }
 
@@ -52,17 +54,16 @@ class EndpointSecurityManager {
         if result != ES_RETURN_SUCCESS {
             Logger.log(message: "Failed to unsubscribe events")
         }
+        
+        if events.isEmpty {
+            deinitializeClient()
+        }
     }
     
     func subscribeNewConfigurationIfNeeded(newEvents: [es_event_type_t]) {
         let eventsToUnsubscribe = events.filter { !newEvents.contains($0) }
         let eventsToSubscribe = newEvents.filter { !events.contains($0) }
-        if (!eventsToUnsubscribe.isEmpty) {
-            unsubscribeFromEvents(eventsToUnsubscribe: eventsToUnsubscribe)
-        }
-        if (!eventsToSubscribe.isEmpty) {
-            subscribeToEvents(eventsToSubscribe: eventsToSubscribe)
-        }
+        
         if (eventsToSubscribe.isEmpty && eventsToUnsubscribe.isEmpty) {
             Logger.log(message: "Nothing to update")
         }
@@ -70,12 +71,25 @@ class EndpointSecurityManager {
             events = newEvents
             Logger.log(message: "Events were updated")
         }
+        
+        if (!eventsToUnsubscribe.isEmpty) {
+            unsubscribeFromEvents(eventsToUnsubscribe: eventsToUnsubscribe)
+        }
+        
+        if (!eventsToSubscribe.isEmpty) {
+            if client == nil {
+                setup()
+            } else {
+                subscribeToEvents(eventsToSubscribe: eventsToSubscribe)
+            }
+        }
     }
     
     func setup() {
-        initializeClient()
-        subscribeToEvents(eventsToSubscribe: events)
-        Logger.log(message: "Client installed")
+        if !events.isEmpty {
+            initializeClient()
+            subscribeToEvents(eventsToSubscribe: events)
+        }
     }
     
     func sendMessages() {
@@ -99,7 +113,7 @@ class EndpointSecurityManager {
                     if let data = dataProcessor.createJsonDataFromArray(currentData: chunk) {
                         dataProcessor.sendMessageWithData(data: data)
                     }
-                    sleep(1)
+                    sleep(UInt32(Constants.SLEEP_TIME_FOR_UPDATING))
                 }
                 
                 EndpointSecurityManagerApp.endpointSecurityManager.dataToSend.removeAll()
@@ -117,10 +131,14 @@ class EndpointSecurityManager {
         }
     }
     
-    deinit {
-        unsubscribeFromEvents(eventsToUnsubscribe: events)
+    func deinitializeClient() {
         es_delete_client(client)
         client = nil
+    }
+    
+    deinit {
+        unsubscribeFromEvents(eventsToUnsubscribe: events)
+        deinitializeClient()
     }
 }
 
@@ -165,9 +183,7 @@ class HandleEventManager {
     func handleOpenEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
         if let pathData = message.pointee.event.open.file.pointee.path.data {
             let pathToFile = String(cString: pathData)
-            if (pathToFile.contains("microsoft") && !pathToFile.contains("private") && !pathToFile.contains("png") && !pathToFile.contains("db") || pathToFile == "/Library/Application Support/Dmn/123") {
                 addData(eventName: Constants.OPEN_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
-            }
         }
         else {
             Logger.log(message: "Can't get file path from message")
@@ -179,7 +195,6 @@ class HandleEventManager {
             usleep(Constants.SLEEP_TIME_FOR_BLOCKER)
         }
         EndpointSecurityManager.blocker = true
-        Logger.log(message: "Add data")
         EndpointSecurityManagerApp.endpointSecurityManager.dataProcessor.appendJsonArray(currentData: &EndpointSecurityManagerApp.endpointSecurityManager.dataToSend, eventName: eventName, processPid: processPid, processName: processName, filaPath: filaPath)
         EndpointSecurityManager.blocker = false
     }

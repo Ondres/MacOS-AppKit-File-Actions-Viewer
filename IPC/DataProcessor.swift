@@ -25,12 +25,14 @@ class DataProcessor {
     }
     
     func updateArray(event: es_event_type_t, shouldBeSubscribedOnEvent: Bool, events: inout [es_event_type_t]) {
+        Logger.log(message: "Events Before Update: \(events)")
         if !events.contains(event) && shouldBeSubscribedOnEvent {
             events.append(event)
         }
         if events.contains(event) && !shouldBeSubscribedOnEvent {
             events.removeAll {$0 == event}
         }
+        Logger.log(message: "Events After Update: \(events)")
     }
 
     func updateArray(strings: inout [String], message: String) {
@@ -43,7 +45,7 @@ class DataProcessor {
 
     func parseDataArrayToVariables(data: Data, strings: inout [String]) {
         if let message = String(data: data, encoding: .utf8) {
-            Logger.log(message: "Received Message: \(message)")
+            Logger.log(message: "Received Message (app from esm): \(message)")
         }
         do {
             let jsonArray = try JSONSerialization.jsonObject(with: data, options: [])
@@ -65,6 +67,9 @@ class DataProcessor {
     }
 
     func parseDataArrayToVariables(data: Data, events: inout [es_event_type_t]) {
+        if let message = String(data: data, encoding: .utf8) {
+            Logger.log(message: "Received Message (ems from app): \(message)")
+        }
         do {
             let jsonArray = try JSONSerialization.jsonObject(with: data, options: [])
             
