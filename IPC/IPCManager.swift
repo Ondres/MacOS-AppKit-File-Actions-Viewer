@@ -13,6 +13,7 @@ class IPCManager {
         self.pathToRead = pathToRead
         self.pathToWrite = pathToWrite
         openReadDescriptor()
+        openWriteDescriptor()
     }
     
     func openReadDescriptor() {
@@ -46,10 +47,8 @@ class IPCManager {
     }
     
     func sendMessage(data: Data) {
-        openWriteDescriptor()
         let fileDescriptor = writefileDescriptor
         let bytesWritten = write(fileDescriptor, (data as NSData).bytes, data.count)
-        closeWriteDescriptor()
         if bytesWritten == -1 {
             let errnoDescription = String(cString: strerror(errno))
             Logger.log(message: "Error opening pipe: WRITE \(errnoDescription)")
@@ -60,11 +59,7 @@ class IPCManager {
     }
     
     func dataFromPipe() -> Data? {
-        openReadDescriptor()
         let fileDescriptor = readFileDescriptor
-        defer {
-            closeReadDescriptor()
-        }
         return readFromPipe(fileDescriptor: fileDescriptor)
     }
     
@@ -75,11 +70,15 @@ class IPCManager {
         case _ where bytesRead > 0:
             return getData(buffer: buffer, bytesRead: bytesRead)
         case 0:
-            Logger.log(message: "No data read from pipe")
+            Logger.log(message: "No data read from pipe, bytesRead = 0")
             return nil
         default:
             let errnoDescription = String(cString: strerror(errno))
-            Logger.log(message: "Error opening pipe: \(errnoDescription)")
+            if errno == EAGAIN || errno == EWOULDBLOCK {
+                Logger.log(message: "No data read from pipe, errno - Resource temporarily unavailable")
+            } else {
+                Logger.log(message: "Error reading from pipe: \(bytesRead), \(errnoDescription)")
+            }
             return nil
         }
     }
