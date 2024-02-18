@@ -4,17 +4,14 @@ import EndpointSecurity
 
 class ViewModel: ObservableObject {
     @Published var logText: [String] = ["Initial Text"]
-
-    func addNewTextLine() {
-        logText.append("\nNew Text Line")
-    }
 }
 
 struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
     @State private var timer: Timer?
     @State var dataToSend: [[String:Any]] = []
-    private let dataProcessor = DataProcessor(pathToPipe: Constants.pipeAppToDeamonPath)
+    @State var blocker: Bool = false
+    private let dataProcessor = DataProcessor(pathToWrite: Constants.pipeAppToDeamonPath, pathToRead: Constants.pipeDeamonToAppPath)
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 20) {
@@ -52,7 +49,12 @@ struct ContentView: View {
     }
     
     private func callAddOrRemoveObserver(key: String) {
+        while(blocker) {
+            usleep(Constants.SLEEP_TIME_FOR_BLOCKER)
+        }
+        blocker = true
         addOrRemoveObserver(key: key, shouldBeSubscribedOnEvent: &Constants.configuration[key]!.1)
+        blocker = false
     }
     
     private func addOrRemoveObserver(key: String, shouldBeSubscribedOnEvent: inout Bool) {
@@ -62,18 +64,23 @@ struct ContentView: View {
     
     func startTimerForRead() {
         Logger.log(message: "Get new Messages")
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            dataProcessor.updateArrayIfNeeded(strings: &viewModel.logText, pathToPipe: Constants.pipeDeamonToAppPath)
+        timer = Timer.scheduledTimer(withTimeInterval: Constants.SLEEP_TIME_FOR_UPDATING, repeats: true) { _ in
+            dataProcessor.updateArrayIfNeeded(strings: &viewModel.logText)
         }
     }
     
     func startTimerForWrite() {
         Logger.log(message: "Send new Messages")
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: Constants.SLEEP_TIME_FOR_UPDATING, repeats: true) { _ in
             if !dataToSend.isEmpty {
                 if let data = dataProcessor.createJsonDataFromArray(currentData: dataToSend) {
-                    dataProcessor.sendMessageWithData(data: data, pathToPipe: Constants.pipeAppToDeamonPath)
+                    while(blocker) {
+                        usleep(Constants.SLEEP_TIME_FOR_BLOCKER)
+                    }
+                    blocker = true
+                    dataProcessor.sendMessageWithData(data: data)
                     dataToSend.removeAll()
+                    blocker = false
                 }
             }
         }

@@ -6,7 +6,6 @@ struct EndpointSecurityManagerApp {
     static let endpointSecurityManager = EndpointSecurityManager()
     
     public static func main() {
-        endpointSecurityManager.setup()
         
         DispatchQueue.global(qos: .background).async {
             endpointSecurityManager.sendMessages()
