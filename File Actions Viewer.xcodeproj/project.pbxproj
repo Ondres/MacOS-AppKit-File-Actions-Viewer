@@ -24,6 +24,7 @@
 
 /* Begin PBXFileReference section */
 		CE1B79732B48913F00F86CFD /* FileInfoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileInfoManager.swift; sourceTree = "<group>"; };
+		CE42E15D2E3FF3E90031773F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		CE44E6CA2B31D0D100BA4867 /* File Actions Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "File Actions Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE44E6CD2B31D0D100BA4867 /* FileActionsViewerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileActionsViewerApp.swift; sourceTree = "<group>"; };
 		CE44E6CF2B31D0D100BA4867 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -68,6 +69,7 @@
 		CE44E6C12B31D0D100BA4867 = {
 			isa = PBXGroup;
 			children = (
+				CE42E15D2E3FF3E90031773F /* .gitignore */,
 				CE1B79722B48912900F86CFD /* Configuration */,
 				CEBCC4B12B3C512C0073F598 /* Logs */,
 				CEBCC4AD2B3C50A60073F598 /* IPC */,
