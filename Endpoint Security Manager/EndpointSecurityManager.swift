@@ -1,13 +1,14 @@
 import Foundation
 import EndpointSecurity
-
+import Darwin.bsm.libbsm
 
 class EndpointSecurityManager {
+    static var filesArray: [String: Monitors] = [:]
     var events: [es_event_type_t] = []
     var dataToSend: [[String: Any]] = []
-    let dataProcessor = DataProcessor(pathToWrite: Constants.pipeDeamonToAppPath, pathToRead: Constants.pipeAppToDeamonPath)
+    let dataProcessor = ESManagerDataProcessor(pathToWrite: Constants.pipeDeamonToAppPath, pathToRead: Constants.pipeAppToDeamonPath)
     static public var messagesArray: String = ""
-    static public var blocker = false
+    static public var blocker = NSLock()
     private var client: OpaquePointer?
     
     private func initializeClient() {
@@ -96,28 +97,29 @@ class EndpointSecurityManager {
         while true {
             sleep(Constants.SLEEP_TIME_FOR_ESM)
             // Wait if we update dataToSend now
-            while EndpointSecurityManager.blocker {
-                usleep(Constants.SLEEP_TIME_FOR_BLOCKER)
-            }
-            
-            if !EndpointSecurityManagerApp.endpointSecurityManager.dataToSend.isEmpty {
-                EndpointSecurityManager.blocker = true
-                let dataToSend = EndpointSecurityManagerApp.endpointSecurityManager.dataToSend
-                Logger.log(message: "Try to Send")
-                // Split message, we need this to avoid message truncation due to memory constraints
-                let chunks = stride(from: 0, to: dataToSend.count, by: Constants.CHUNK_SIZE).map {
-                    Array(dataToSend[$0 ..< min($0 + Constants.CHUNK_SIZE, dataToSend.count)])
-                }
-                
-                for chunk in chunks {
-                    if let data = dataProcessor.createJsonDataFromArray(currentData: chunk) {
-                        dataProcessor.sendMessageWithData(data: data)
+            while true {
+                if EndpointSecurityManager.blocker.try() {
+                    if !EndpointSecurityManagerApp.endpointSecurityManager.dataToSend.isEmpty {
+                        let dataToSend = EndpointSecurityManagerApp.endpointSecurityManager.dataToSend
+                        // Split message, we need this to avoid message truncation due to memory constraints
+                        let chunks = stride(from: 0, to: dataToSend.count, by: Constants.CHUNK_SIZE).map {
+                            Array(dataToSend[$0 ..< min($0 + Constants.CHUNK_SIZE, dataToSend.count)])
+                        }
+                        
+                        for chunk in chunks {
+                            if let data = dataProcessor.createJsonDataFromArray(currentData: chunk) {
+                                dataProcessor.sendMessageWithData(data: data)
+                            }
+                            sleep(UInt32(Constants.SLEEP_TIME_FOR_UPDATING))
+                        }
+                        
+                        EndpointSecurityManagerApp.endpointSecurityManager.dataToSend.removeAll()
                     }
-                    sleep(UInt32(Constants.SLEEP_TIME_FOR_UPDATING))
+                    EndpointSecurityManager.blocker.unlock()
+                    break
+                } else {
+                    usleep(Constants.SLEEP_TIME_FOR_BLOCKER)
                 }
-                
-                EndpointSecurityManagerApp.endpointSecurityManager.dataToSend.removeAll()
-                EndpointSecurityManager.blocker = false
             }
         }
     }
@@ -126,7 +128,7 @@ class EndpointSecurityManager {
         while true {
             sleep(Constants.SLEEP_TIME_FOR_ESM)
             var newEvents = events
-            dataProcessor.updateArrayIfNeeded(events: &newEvents)
+            dataProcessor.updateArrayIfNeeded(events: &newEvents, filesArray: &EndpointSecurityManager.filesArray)
             subscribeNewConfigurationIfNeeded(newEvents: newEvents)
         }
     }
@@ -145,7 +147,8 @@ class EndpointSecurityManager {
 
 class HandleEventManager {
     func handleEventMessage(_ client: OpaquePointer, _ message: UnsafePointer<es_message_t>) {
-        let processPid = Int(message.pointee.process.pointee.ppid)
+        let auditToken = message.pointee.process.pointee.audit_token
+        let processPid = Int(audit_token_to_pid(auditToken))
         let processPath = String(cString: message.pointee.process.pointee.executable.pointee.path.data)
         switch message.pointee.event_type {
         case ES_EVENT_TYPE_NOTIFY_OPEN:
@@ -153,7 +156,17 @@ class HandleEventManager {
         case ES_EVENT_TYPE_NOTIFY_UNLINK:
             handleUnlinkEvent(message: message, processPid: processPid, processPath: processPath)
         case ES_EVENT_TYPE_NOTIFY_RENAME:
-            handleRenameEvent(message: message, processPid: processPid, processPath: processPath)
+            handleRenameOrMoveEvent(message: message, processPid: processPid, processPath: processPath)
+        case ES_EVENT_TYPE_NOTIFY_DELETEEXTATTR:
+            handleDeleteEvent(message: message, processPid: processPid, processPath: processPath)
+        case ES_EVENT_TYPE_NOTIFY_LINK:
+            handleLinkEvent(message: message, processPid: processPid, processPath: processPath)
+        case ES_EVENT_TYPE_NOTIFY_EXCHANGEDATA:
+            handleExchangeEvent(message: message, processPid: processPid, processPath: processPath)
+        case ES_EVENT_TYPE_NOTIFY_WRITE:
+            handleWriteEvent(message: message, processPid: processPid, processPath: processPath)
+        case ES_EVENT_TYPE_NOTIFY_CLOSE:
+            handleCloseEvent(message: message, processPid: processPid, processPath: processPath)
         default:
             Logger.log(message: "Unexpected event type encountered: \(message.pointee.event_type.rawValue)")
         }
@@ -162,28 +175,101 @@ class HandleEventManager {
     func handleUnlinkEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
         if let pathData = message.pointee.event.unlink.target.pointee.path.data {
             let pathToFile = String(cString: pathData)
-            addData(eventName: Constants.UNLINK_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            if EndpointSecurityManager.filesArray.contains(where: { $0.key == pathToFile && $0.value.monitorUnlinkEvent }) {
+                addData(eventName: Constants.UNLINK_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            }
         }
         else {
             Logger.log(message: "Can't get file path from message")
         }
     }
     
-    func handleRenameEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
-        if let sourceData = message.pointee.event.rename.source.pointee.path.data, let destinationData = message.pointee.event.rename.destination.existing_file.pointee.path.data {
+    func isRenameEvent(sourcePath: String, destinationPath: String) -> Bool {
+        let sourceDirectory = (sourcePath as NSString).deletingLastPathComponent
+        let destinationDirectory = (destinationPath as NSString).deletingLastPathComponent
+        return sourceDirectory == destinationDirectory
+    }
+    
+    func handleRenameOrMoveEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
+        if let sourceData = message.pointee.event.rename.source.pointee.path.data, let newDirectoryPathData = message.pointee.event.rename.destination.new_path.dir.pointee.path.data, let newFilenameData = message.pointee.event.rename.destination.new_path.filename.data {
+            let newDirectoryPath =  String(cString: newDirectoryPathData)
+            let newFilename =  String(cString: newFilenameData)
             let sourcePath = String(cString: sourceData)
-            let destinationPath = String(cString: destinationData)
-            let pathToFile = "Source path: \(sourcePath), Destination path: \(destinationPath)"
-            addData(eventName: Constants.MOVE_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            let newFullPath = "\(newDirectoryPath)/\(newFilename)"
+            if isRenameEvent(sourcePath: sourcePath, destinationPath: newFullPath) && EndpointSecurityManager.filesArray.contains(where: { $0.key == sourcePath && $0.value.monitorRenameEvent }) {
+                EndpointSecurityManager.filesArray[newFullPath] = EndpointSecurityManager.filesArray[sourcePath]
+                EndpointSecurityManager.filesArray[sourcePath] = nil
+                addData(eventName: Constants.RENAME_KEY, processPid: processPid, processName: processPath, filaPath: sourcePath)
+            } 
+            if !isRenameEvent(sourcePath: sourcePath, destinationPath: newFullPath) && EndpointSecurityManager.filesArray.contains(where: { $0.key == sourcePath && $0.value.monitorMoveEvent }) {
+                EndpointSecurityManager.filesArray[newFullPath] = EndpointSecurityManager.filesArray[sourcePath]
+                EndpointSecurityManager.filesArray[sourcePath] = nil
+                addData(eventName: Constants.MOVE_KEY, processPid: processPid, processName: processPath, filaPath: newFullPath)
+            }
         }
-        else {
+    }
+    
+    func handleDeleteEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
+        if let pathData = message.pointee.event.deleteextattr.target.pointee.path.data {
+            let pathToFile = String(cString: pathData)
+            if EndpointSecurityManager.filesArray.contains(where: { $0.key == pathToFile && $0.value.monitorDeleteEvent }) {
+                addData(eventName: Constants.DELETE_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            }
+        } else {
             Logger.log(message: "Can't get file path from message")
         }
     }
+    
+    func handleLinkEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
+        if let pathData = message.pointee.event.link.source.pointee.path.data {
+            let pathToFile = String(cString: pathData)
+            if EndpointSecurityManager.filesArray.contains(where: { $0.key == pathToFile && $0.value.monitorLinkEvent }) {
+                addData(eventName: Constants.LINK_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            }
+        } else {
+            Logger.log(message: "Can't get file path from message")
+        }
+    }
+    
+    func handleExchangeEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
+        if let pathData = message.pointee.event.exchangedata.file1.pointee.path.data {
+            let pathToFile = String(cString: pathData)
+            if EndpointSecurityManager.filesArray.contains(where: { $0.key == pathToFile && $0.value.monitorExchangeEvent }) {
+                addData(eventName: Constants.EXCHANGE_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            }
+        } else {
+            Logger.log(message: "Can't get file path from message")
+        }
+    }
+    
+    func handleWriteEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
+        if let pathData = message.pointee.event.write.target.pointee.path.data {
+            let pathToFile = String(cString: pathData)
+            if EndpointSecurityManager.filesArray.contains(where: { $0.key == pathToFile && $0.value.monitorWriteEvent }) {
+                addData(eventName: Constants.WRITE_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            }
+        } else {
+            Logger.log(message: "Can't get file path from message")
+        }
+    }
+    
+    func handleCloseEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
+        if let pathData = message.pointee.event.close.target.pointee.path.data {
+            let pathToFile = String(cString: pathData)
+            if EndpointSecurityManager.filesArray.contains(where: { $0.key == pathToFile && $0.value.monitorCloseEvent }) {
+                addData(eventName: Constants.CLOSE_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            }
+        } else {
+            Logger.log(message: "Can't get file path from message")
+        }
+    }
+    
     func handleOpenEvent(message: UnsafePointer<es_message_t>, processPid: Int, processPath: String) {
         if let pathData = message.pointee.event.open.file.pointee.path.data {
             let pathToFile = String(cString: pathData)
+            if EndpointSecurityManager.filesArray.contains(where: { $0.key == pathToFile && $0.value.monitorOpenEvent }) {
                 addData(eventName: Constants.OPEN_KEY, processPid: processPid, processName: processPath, filaPath: pathToFile)
+            }
         }
         else {
             Logger.log(message: "Can't get file path from message")
@@ -191,14 +277,14 @@ class HandleEventManager {
     }
     
     func addData(eventName: String, processPid: Int, processName: String, filaPath: String) {
-        while EndpointSecurityManager.blocker {
-            usleep(Constants.SLEEP_TIME_FOR_BLOCKER)
+        while true {
+            if EndpointSecurityManager.blocker.try() {
+                EndpointSecurityManagerApp.endpointSecurityManager.dataProcessor.appendJsonArray(currentData: &EndpointSecurityManagerApp.endpointSecurityManager.dataToSend, eventName: eventName, processPid: processPid, processName: processName, filaPath: filaPath)
+                EndpointSecurityManager.blocker.unlock()
+                break
+            } else {
+                usleep(Constants.SLEEP_TIME_FOR_BLOCKER)
+            }
         }
-        EndpointSecurityManager.blocker = true
-        EndpointSecurityManagerApp.endpointSecurityManager.dataProcessor.appendJsonArray(currentData: &EndpointSecurityManagerApp.endpointSecurityManager.dataToSend, eventName: eventName, processPid: processPid, processName: processName, filaPath: filaPath)
-        EndpointSecurityManager.blocker = false
     }
 }
-
-
-

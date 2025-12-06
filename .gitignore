@@ -4,6 +4,7 @@ build/
 xcuserdata/
 *.xcuserstate
 *.xcscmblueprint
+*.DS_Store
 
 # Swift Package Manager
 .build/
@@ -13,11 +14,6 @@ Pods/
 
 # Carthage
 Carthage/Build/
-
-# Fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
 
 # SwiftPM artifacts
 *.xcodeproj/project.xcworkspace

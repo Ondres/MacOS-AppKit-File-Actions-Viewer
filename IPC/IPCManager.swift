@@ -1,5 +1,6 @@
 import Foundation
 import EndpointSecurity
+import Darwin
 
 class IPCManager {
     var writefileDescriptor: Int32 = -1
@@ -59,8 +60,30 @@ class IPCManager {
     }
     
     func dataFromPipe() -> Data? {
-        let fileDescriptor = readFileDescriptor
-        return readFromPipe(fileDescriptor: fileDescriptor)
+        var readFds = fd_set()
+        memset(&readFds, 0, MemoryLayout<fd_set>.size) 
+        __darwin_fd_set(Int32(readFileDescriptor), &readFds)
+        var timeout = timeval()
+        timeout.tv_usec = 1000
+        
+        let result = select(readFileDescriptor + 1, &readFds, nil, nil, &timeout)
+        switch result {
+        case 0:
+            //Logger.log(message: "No data in select")
+            return nil
+        case -1:
+            let errnoDescription = String(cString: strerror(errno))
+            Logger.log(message: "Error in select(): \(errnoDescription)")
+            return nil
+        default:
+            if __darwin_fd_isset(Int32(readFileDescriptor), &readFds) != 0 {
+                Logger.log(message: "Some data in select, will check")
+                return readFromPipe(fileDescriptor: readFileDescriptor)
+            } else {
+                Logger.log(message: "Unknown error: No file descriptor set.")
+                return nil
+            }
+        }
     }
     
     private func readFromPipe(fileDescriptor: Int32) -> Data? {
